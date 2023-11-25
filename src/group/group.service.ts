@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateGroupDto } from './dto/create-group.dto';
 import { UpdateGroupDto } from './dto/update-group.dto';
 import { GroupRepository } from './group.repository';
@@ -13,6 +13,11 @@ export class GroupService {
   ) {}
 
   async findAllMembers(groupId: number) {
+    const group = await this.groupRepository.findOne({
+      where: { id: groupId },
+    });
+    if (!group) throw new NotFoundException('존재하지 않는 그룹입니다.');
+
     const users: User[] = await this.userRepository.findUsersByGroupId(groupId);
     return users;
   }

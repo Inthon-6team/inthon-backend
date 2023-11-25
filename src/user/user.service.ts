@@ -23,7 +23,7 @@ export class UserService {
       joinUserDto;
 
     const exUser = await this.userRepository.findOneBy({ id });
-    if (exUser) throw new ConflictException();
+    if (exUser) throw new ConflictException('이미 존재하는 아이디입니다.');
 
     const user = new User();
     user.id = id;
@@ -39,7 +39,7 @@ export class UserService {
 
   async findByIdOrThrow(id: string) {
     const user = await this.userRepository.findOneBy({ id: id });
-    if (!user) throw new NotFoundException();
+    if (!user) throw new NotFoundException('존재하지 않는 유저입니다.');
     return user;
   }
 
