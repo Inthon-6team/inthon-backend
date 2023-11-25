@@ -17,5 +17,5 @@ COPY . .
 RUN npm run build
 
 # Start deploying server
-EXPOSE $PORT
+EXPOSE 8000
 CMD ["npm", "run", "start:prod"]
