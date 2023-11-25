@@ -10,4 +10,11 @@ export class UserRepository extends Repository<User> {
   ) {
     super(repository.target, repository.manager);
   }
+
+  async findUsersByGroupId(groupId: number): Promise<User[]> {
+    return this.createQueryBuilder('user')
+      .innerJoinAndSelect('user.group', 'group')
+      .where('group.id = :groupId', { groupId })
+      .getMany();
+  }
 }

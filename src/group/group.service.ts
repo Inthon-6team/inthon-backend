@@ -1,26 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { CreateGroupDto } from './dto/create-group.dto';
 import { UpdateGroupDto } from './dto/update-group.dto';
+import { GroupRepository } from './group.repository';
+import { UserRepository } from 'src/user/user.respository';
+import { User } from 'src/user/entities/user.entity';
 
 @Injectable()
 export class GroupService {
-  create(createGroupDto: CreateGroupDto) {
-    return 'This action adds a new group';
-  }
+  constructor(
+    private readonly groupRepository: GroupRepository,
+    private readonly userRepository: UserRepository,
+  ) {}
 
-  findAll() {
-    return `This action returns all group`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} group`;
-  }
-
-  update(id: number, updateGroupDto: UpdateGroupDto) {
-    return `This action updates a #${id} group`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} group`;
+  async findAllMembers(groupId: number) {
+    const users: User[] = await this.userRepository.findUsersByGroupId(groupId);
+    return users;
   }
 }
