@@ -1,6 +1,4 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateGroupDto } from './dto/create-group.dto';
-import { UpdateGroupDto } from './dto/update-group.dto';
 import { GroupRepository } from './group.repository';
 import { UserRepository } from 'src/user/user.respository';
 import { User } from 'src/user/entities/user.entity';
