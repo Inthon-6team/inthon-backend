@@ -47,6 +47,6 @@ export class UserController {
   @Get()
   @UseGuards(JwtAuthGuard)
   findMyProfile(@AuthUser() user: User) {
-    return this.userService.findMyProfile(user.id);
+    return this.userService.findByIdOrThrow(user.id);
   }
 }

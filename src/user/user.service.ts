@@ -55,10 +55,4 @@ export class UserService {
 
     return await this.userRepository.save(user);
   }
-
-  async findMyProfile(id) {
-    const user = await this.userRepository.findOneBy(id);
-    if (!user) throw new NotFoundException('존재하지 않는 유저입니다.');
-    return user;
-  }
 }
