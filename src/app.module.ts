@@ -3,6 +3,8 @@ import { UserModule } from './user/user.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './user/entities/user.entity';
+import { GroupModule } from './group/group.module';
+import { Group } from './group/entities/group.entity';
 
 @Module({
   imports: [
@@ -14,7 +16,7 @@ import { User } from './user/entities/user.entity';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-      entities: [User],
+      entities: [User, Group],
       migrations: [__dirname + '/src/migrations/*.ts'],
       autoLoadEntities: true,
       charset: 'utf8mb4',
@@ -23,6 +25,7 @@ import { User } from './user/entities/user.entity';
       keepConnectionAlive: true,
     }),
     UserModule,
+    GroupModule,
   ],
   controllers: [],
   providers: [],
