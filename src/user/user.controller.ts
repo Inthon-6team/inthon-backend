@@ -10,12 +10,7 @@ import {
 import { UserService } from './user.service';
 import { JoinReqDto } from './dto/req/join.req.dto';
 import { UpdateUserReqDto } from './dto/req/update.req.dto';
-import {
-  ApiBearerAuth,
-  ApiCookieAuth,
-  ApiOperation,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 import { AuthUser } from 'src/auth/decorator/auth-user.decorator';
 import { User } from './entities/user.entity';
@@ -45,5 +40,13 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   update(@AuthUser() user: User, @Body() updateUserDto: UpdateUserReqDto) {
     return this.userService.update(user, updateUserDto);
+  }
+
+  @ApiOperation({ summary: '유저 정보 조회' })
+  @ApiBearerAuth()
+  @Get()
+  @UseGuards(JwtAuthGuard)
+  findMyProfile(@AuthUser() user: User) {
+    return this.userService.findMyProfile(user.id);
   }
 }
