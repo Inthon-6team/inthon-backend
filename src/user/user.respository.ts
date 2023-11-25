@@ -17,4 +17,11 @@ export class UserRepository extends Repository<User> {
       .where('group.id = :groupId', { groupId })
       .getMany();
   }
+
+  async findUserByIdWithPassword(id: string): Promise<User> {
+    return this.createQueryBuilder('user')
+      .addSelect('user.password')
+      .where('user.id = :id', { id })
+      .getOne();
+  }
 }
