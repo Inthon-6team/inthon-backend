@@ -1,7 +1,7 @@
 import { ApiProperty, PickType } from '@nestjs/swagger';
-import { User } from '../entities/user.entity';
+import { User } from '../../entities/user.entity';
 
-export class JoinUserDto extends PickType(User, [
+export class JoinReqDto extends PickType(User, [
   'id',
   'password',
   'name',

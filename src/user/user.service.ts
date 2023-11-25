@@ -2,14 +2,16 @@ import {
   Injectable,
   NotFoundException,
   ConflictException,
+  UnauthorizedException,
 } from '@nestjs/common';
-import { JoinUserDto } from './dto/join-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { JoinReqDto } from './dto/req/join.req.dto';
+import { UpdateUserReqDto } from './dto/req/update.req.dto';
 import { UserRepository } from './user.respository';
 import { User } from './entities/user.entity';
 import { Group } from '../group/entities/group.entity';
 import { GroupRepository } from 'src/group/group.repository';
 import * as bcrypt from 'bcrypt';
+import { LoginReqDto } from './dto/req/login.req.dto';
 
 @Injectable()
 export class UserService {
@@ -18,9 +20,9 @@ export class UserService {
     private readonly groupRepository: GroupRepository,
   ) {}
 
-  async create(joinUserDto: JoinUserDto) {
+  async join(joinReqDto: JoinReqDto) {
     const { id, password, name, profile_image, introduction, group_id } =
-      joinUserDto;
+      joinReqDto;
 
     const exUser = await this.userRepository.findOneBy({ id });
     if (exUser) throw new ConflictException('이미 존재하는 아이디입니다.');
@@ -37,14 +39,27 @@ export class UserService {
     return await this.userRepository.save(user);
   }
 
+  async login(loginReqDto: LoginReqDto) {
+    const { id, password } = loginReqDto;
+
+    const user = await this.userRepository.findOneBy({ id });
+    if (!user) throw new NotFoundException('존재하지 않는 아이디입니다.');
+
+    const isMatch = bcrypt.compareSync(password, user.password);
+    if (!isMatch)
+      throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
+
+    return user;
+  }
+
   async findByIdOrThrow(id: string) {
     const user = await this.userRepository.findOneBy({ id: id });
     if (!user) throw new NotFoundException('존재하지 않는 유저입니다.');
     return user;
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto) {
-    const { name, profile_image, introduction, group_id } = updateUserDto;
+  async update(id: string, updateReqDto: UpdateUserReqDto) {
+    const { name, profile_image, introduction, group_id } = updateReqDto;
     const user = await this.findByIdOrThrow(id);
 
     user.name = name ? name : user.name;
