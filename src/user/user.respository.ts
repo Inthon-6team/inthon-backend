@@ -24,4 +24,11 @@ export class UserRepository extends Repository<User> {
       .where('user.id = :id', { id })
       .getOne();
   }
+
+  async findUsersGroupId(id: string): Promise<User> {
+    return this.createQueryBuilder('user')
+      .innerJoinAndSelect('user.group', 'group')
+      .where('user.id = :id', { id })
+      .getOne();
+  }
 }

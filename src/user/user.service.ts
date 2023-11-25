@@ -44,9 +44,8 @@ export class UserService {
     return user;
   }
 
-  async update(id: string, updateReqDto: UpdateUserReqDto) {
+  async update(user: User, updateReqDto: UpdateUserReqDto) {
     const { name, profile_image, introduction, group_id } = updateReqDto;
-    const user = await this.findByIdOrThrow(id);
 
     user.name = name ? name : user.name;
     user.profile_image = profile_image ? profile_image : user.profile_image;

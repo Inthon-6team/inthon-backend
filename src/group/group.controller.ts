@@ -1,15 +1,20 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { GroupService } from './group.service';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
+import { AuthUser } from 'src/auth/decorator/auth-user.decorator';
+import { User } from 'src/user/entities/user.entity';
 
 @ApiTags('group')
 @Controller('group')
 export class GroupController {
   constructor(private readonly groupService: GroupService) {}
   @ApiOperation({ summary: '그룹 멤버 전체의 정보 가져오기' })
-  @Get(':id/members')
-  findAll(@Param('id') id: string) {
-    return this.groupService.findAllMembers(+id);
+  @ApiBearerAuth()
+  @Get('/members')
+  @UseGuards(JwtAuthGuard)
+  findAll(@AuthUser() user: User) {
+    return this.groupService.findAllMembers(user);
   }
 
   /*

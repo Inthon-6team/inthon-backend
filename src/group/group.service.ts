@@ -10,11 +10,10 @@ export class GroupService {
     private readonly userRepository: UserRepository,
   ) {}
 
-  async findAllMembers(groupId: number) {
-    const group = await this.groupRepository.findOne({
-      where: { id: groupId },
-    });
-    if (!group) throw new NotFoundException('존재하지 않는 그룹입니다.');
+  async findAllMembers(user: User) {
+    console.log(user);
+    const groupId = (await this.userRepository.findUsersGroupId(user.id)).group
+      .id;
 
     const users: User[] = await this.userRepository.findUsersByGroupId(groupId);
     return users;

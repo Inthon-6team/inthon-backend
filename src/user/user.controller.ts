@@ -17,6 +17,8 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
+import { AuthUser } from 'src/auth/decorator/auth-user.decorator';
+import { User } from './entities/user.entity';
 
 @ApiTags('user')
 @Controller('user')
@@ -39,9 +41,9 @@ export class UserController {
 
   @ApiOperation({ summary: '유저 정보 수정' })
   @ApiBearerAuth()
-  @Patch(':id')
+  @Patch()
   @UseGuards(JwtAuthGuard)
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserReqDto) {
-    return this.userService.update(id, updateUserDto);
+  update(@AuthUser() user: User, @Body() updateUserDto: UpdateUserReqDto) {
+    return this.userService.update(user, updateUserDto);
   }
 }
