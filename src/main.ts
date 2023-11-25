@@ -8,7 +8,7 @@ async function bootstrap() {
 
   const document_config = new DocumentBuilder()
     .setTitle('Inthon Server')
-    .setDescription('Inthon API Description')
+    .setDescription('[Inthon API Description]: 관리자 용 API에 주의 할 것.')
     .setVersion('1.0.0')
     .addBearerAuth()
     .build();
