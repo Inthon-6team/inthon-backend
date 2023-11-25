@@ -17,5 +17,5 @@ COPY . .
 RUN npm run build
 
 # Start deploying server
-EXPOSE 8000
+EXPOSE 3000
 CMD ["npm", "run", "start:prod"]
