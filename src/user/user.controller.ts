@@ -26,7 +26,7 @@ export class UserController {
   @ApiOperation({ summary: '[only 관리자] 유저 정보 조회' })
   @Get(':id')
   findById(@Param('id') id: string) {
-    return this.userService.findById(id);
+    return this.userService.findByIdOrThrow(id);
   }
 
   @ApiOperation({ summary: '유저 정보 수정' })

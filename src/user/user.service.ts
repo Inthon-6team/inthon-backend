@@ -22,10 +22,8 @@ export class UserService {
     const { id, password, name, profile_image, introduction, group_id } =
       joinUserDto;
 
-    const exUser = this.userRepository.findOneBy({ id });
+    const exUser = await this.userRepository.findOneBy({ id });
     if (exUser) throw new ConflictException();
-
-    const group = await this.groupRepository.findOneByOrFail({ id: group_id });
 
     const user = new User();
     user.id = id;
@@ -33,25 +31,28 @@ export class UserService {
     user.name = name;
     user.profile_image = profile_image;
     user.introduction = introduction;
+    const group = await this.groupRepository.findOneBy({ id: group_id });
     user.group = group ? group : await this.groupRepository.save(new Group());
-    return user;
+
+    return await this.userRepository.save(user);
   }
 
-  async findById(id: string) {
-    const user = await this.userRepository.findOneByOrFail({ id });
+  async findByIdOrThrow(id: string) {
+    const user = await this.userRepository.findOneBy({ id: id });
     if (!user) throw new NotFoundException();
     return user;
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
-    const { name, profile_image, introduction } = updateUserDto;
-    const user = await this.userRepository.findOneByOrFail({ id });
+    const { name, profile_image, introduction, group_id } = updateUserDto;
+    const user = await this.findByIdOrThrow(id);
 
     user.name = name ? name : user.name;
     user.profile_image = profile_image ? profile_image : user.profile_image;
     user.introduction = introduction ? introduction : user.introduction;
-    await this.userRepository.save(user);
+    const group = await this.groupRepository.findOneBy({ id: group_id });
+    user.group = group ? group : await this.groupRepository.save(new Group());
 
-    return user;
+    return await this.userRepository.save(user);
   }
 }
