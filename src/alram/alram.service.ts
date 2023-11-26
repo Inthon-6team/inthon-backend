@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { SubscribeReqDto } from './dto/req/subscribe.req.dto';
 import { UserRepository } from 'src/user/user.respository';
 import * as admin from 'firebase-admin';
+import { RegisterDeviceReqDto } from './dto/req/register-device.req.dto';
 
 @Injectable()
 export class AlramService {
@@ -69,6 +70,24 @@ export class AlramService {
       return userTokens;
     } catch (error) {
       console.error('유저 토큰 조회 중 오류 발생:', error);
+    }
+  }
+
+  async registerDeviceToken(
+    userId: string,
+    registerDeviceReqDto: RegisterDeviceReqDto,
+  ) {
+    const { deviceToken } = registerDeviceReqDto;
+    // firestore에 user_token 컬렉션에 문서를 생성
+    // userId와 deviceToken을 저장
+    try {
+      await admin.firestore().collection('user_token').doc().set({
+        user_id: userId,
+        device_token: deviceToken,
+      });
+      console.log('디바이스 토큰이 성공적으로 등록되었습니다');
+    } catch (error) {
+      console.error('디바이스 토큰 등록 중 오류 발생:', error);
     }
   }
 }
