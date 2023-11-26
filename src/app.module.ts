@@ -6,6 +6,7 @@ import { User } from './user/entities/user.entity';
 import { GroupModule } from './group/group.module';
 import { Group } from './group/entities/group.entity';
 import { AuthModule } from './auth/auth.module';
+import { AlramModule } from './alram/alram.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { AuthModule } from './auth/auth.module';
     UserModule,
     GroupModule,
     AuthModule,
+    AlramModule,
   ],
   controllers: [],
   providers: [],
