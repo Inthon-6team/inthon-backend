@@ -3,13 +3,14 @@ import { SubscribeReqDto } from './dto/req/subscribe.req.dto';
 import { UserRepository } from 'src/user/user.respository';
 import * as admin from 'firebase-admin';
 import { RegisterDeviceReqDto } from './dto/req/register-device.req.dto';
+import * as serviceAccount from './firebase.json';
 
 @Injectable()
 export class AlramService {
   constructor(private readonly userRepository: UserRepository) {
     // app initialize
     admin.initializeApp({
-      credential: admin.credential.cert('src/alram/firebase.json'),
+      credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
     });
   }
 
@@ -24,33 +25,37 @@ export class AlramService {
 
     // Message 생성
     const message = `${senderName}님이 ${receiverName}님을 집으로 불렀습니다.`;
-    const payload = {
-      notification: {
-        title: '집에 돌아오세요 ㅠㅠ',
-        body: message,
-      },
-    };
-
-    console.log('payload', payload);
 
     // ReceiverID로 토큰 조회
-    const userTokens: String[] = await this.findTokenByUserIdFromFireStore(
-      receiver_id,
+    const userTokens = await this.findTokenByUserIdFromFireStore(receiver_id);
+    // null인 토큰 제거
+    const updatedTokens = userTokens.filter(
+      (token) => token.device_token !== null,
     );
-
-    console.log('userTokens', userTokens);
-
-    // 토큰으로 알림 전송
-    this.sendPushNotification(payload, userTokens);
+    // 푸시 알림 전송
+    this.sendPushNotification(message, updatedTokens);
   }
 
-  async sendPushNotification(payload, token) {
-    try {
-      await admin.messaging().sendToDevice(token, payload);
-      console.log('알림이 성공적으로 전송되었습니다');
-    } catch (error) {
-      console.error('알림 전송 중 오류 발생:', error);
-    }
+  async sendPushNotification(payload, tokens) {
+    const message = {
+      data: {
+        message: payload,
+      },
+      tokens: tokens.map((token) => token.device_token),
+    };
+    console.log('message', message);
+    // Send a message to the device corresponding to the provided
+    // registration token.
+    admin
+      .messaging()
+      .sendMulticast(message)
+      .then((response) => {
+        // Response is a message ID string.
+        console.log('Successfully sent message:', response);
+      })
+      .catch((error) => {
+        console.log('Error sending message:', error);
+      });
   }
 
   async findTokenByUserIdFromFireStore(userId: string) {
